@@ -46,7 +46,6 @@
   .pill i{width:9px;height:9px;border-radius:50%;display:inline-block}
   .pill.want{color:var(--sea);border-color:rgba(11,90,138,.35);background:rgba(11,90,138,.06)}
   .pill.want i{background:var(--sea)}
-  .pill.maybe i{background:var(--ochre)}
   .pill.time{color:var(--ink)}
   .pill.price{color:var(--bronze);border-color:rgba(176,141,87,.45);background:rgba(176,141,87,.09)}
   .reset{
@@ -140,18 +139,15 @@
   .lnk:hover{background:rgba(11,90,138,.07);border-color:var(--sea)}
   .lnk.shot{color:#fff;background:var(--sea);border-color:var(--sea)}
   .lnk.shot:hover{background:var(--sea-deep);border-color:var(--sea-deep)}
+  .lnk.tix{color:#fff;background:var(--ochre);border-color:var(--ochre)}
+  .lnk.tix:hover{background:#a85f1f;border-color:#a85f1f}
+  .when{margin-top:11px;font-size:12.5px;color:var(--ink-soft);line-height:1.45}
   .foot{margin-top:13px}
 
   /* state styles */
   .card[data-state="want"]{border-color:var(--sea);box-shadow:0 0 0 2px var(--sea), var(--shadow)}
   .card[data-state="want"] .seal{background:var(--sea);transform:scale(1);opacity:1}
   .card[data-state="want"] .state-txt{color:var(--sea)}
-  .card[data-state="maybe"]{border-color:var(--ochre);box-shadow:0 0 0 2px rgba(200,116,43,.55), var(--shadow)}
-  .card[data-state="maybe"] .seal{background:var(--ochre);transform:scale(1);opacity:1}
-  .card[data-state="maybe"] .state-txt{color:var(--ochre)}
-  .card[data-state="skip"]{opacity:.5;filter:grayscale(.7)}
-  .card[data-state="skip"] .seal{background:var(--skip);transform:scale(1);opacity:1}
-  .card[data-state="skip"] .state-txt{color:var(--skip)}
 
   /* ---------- summary ---------- */
   .summary{
@@ -176,6 +172,8 @@
   .sumtotal .val{font-family:"Marcellus",serif;font-size:22px;color:var(--ink)}
   .sumtotal .val b{color:var(--sea);font-weight:400}
   .sumtotal .val small{font-family:"Mulish",sans-serif;font-size:12.5px;font-weight:600;color:var(--ink-soft);letter-spacing:.01em}
+  .infonote{margin-top:12px;font-size:12.5px;color:var(--ink-soft);line-height:1.5;background:rgba(11,90,138,.05);border:1px solid rgba(11,90,138,.18);border-radius:10px;padding:12px 14px}
+  .infonote b{color:var(--ink)}
 
   footer{text-align:center;color:var(--ink-soft);font-size:12.5px;margin-top:30px;letter-spacing:.03em}
 
@@ -198,8 +196,7 @@
 <div class="bar">
   <div class="brand"><b class="marc">Atene — kaj želimo videti?</b><span>13.–15. oktober 2026</span></div>
   <div class="tally">
-    <span class="pill want"><i></i><span id="cWant">0</span> želim</span>
-    <span class="pill maybe"><i></i><span id="cMaybe">0</span> mogoče</span>
+    <span class="pill want"><i></i><span id="cWant">0</span> izbrano</span>
     <span class="pill time">≈ <span id="cTime">0</span> h</span>
     <span class="pill price">≈ <span id="cPrice">0</span> €/os.</span>
   </div>
@@ -209,7 +206,7 @@
 <header class="hero">
   <div class="grk">ΑΘΗΝΑ</div>
   <div class="sub">Dva para · 2,5 dneva · izberite skupaj</div>
-  <div class="how">Tapnite kartico, da označite: <b>1× = želim videti</b> &nbsp;·&nbsp; <b>2× = mogoče</b> &nbsp;·&nbsp; <b>3× = preskoči</b>. Števec zgoraj sešteje izbire in oceni skupni čas.</div>
+  <div class="how">Tapnite kartico, da jo izberete (<b>✓ želim videti</b>). S ponovnim tapom izbiro prekličete. Števec zgoraj sešteje izbire in oceni skupni čas.</div>
   <svg class="meander" viewBox="0 0 400 20" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
     <defs><pattern id="mk" width="40" height="20" patternUnits="userSpaceOnUse">
       <path d="M0 18 H40 M3 18 V3 H37 V7 H11 V14 H29 V10" fill="none" stroke="#D9B884" stroke-width="2"/>
@@ -227,6 +224,7 @@
     <ul class="sumlist" id="sumlist"></ul>
     <div class="sumtotal" id="sumtotal" hidden></div>
     <div class="tip" id="tip">💡 Izbire se ne shranijo — ko ste zadovoljni, naredite posnetek zaslona (screenshot) in mi ga pošljite, pa naredim končni načrt po dnevih.</div>
+    <p class="infonote">🎟️ Zgornji izračun upošteva, da so <b>3 potniki pod 25 let</b> in <b>1 potnik nad 25 let</b>. <b>EU državljani pod 25</b> imajo <b>brezplačen vstop</b> na Akropolo in državna najdišča — samo pokaži osebno z naslovom. Vsako najdišče se kupi posebej prek <b>hhticket.gr</b> (uradna kombinirana vstopnica je ukinjena).</p>
   </div>
 </section>
 
@@ -236,60 +234,60 @@
 const SIGHTS = [
   { sec:"antika", title:"Antične znamenitosti", g:"g-antika",
     items:[
-      {id:"acro", name:"Akropola & Partenon", cat:"Antika · ikona", area:"center", time:"2–3 h", min:150, cost:"~30 €", free:false,
+      {id:"acro", name:"Akropola & Partenon", cat:"Antika · ikona", area:"center", time:"2–3 h", min:150, cost:"~30 €", free:false, eu25:true,
        desc:"Simbol Aten na hribu nad mestom — Partenon, Erehtejon, Dionizovo gledališče. Najbolje zgodaj zjutraj.",
        img:"https://lh3.googleusercontent.com/place-photos/AJRVUZNpv5BRoAkUL_PCkLBKeBCJtL_0CbXKB6iZ1a-pauV0ngWadLAjXTDh-t3WJ99JUUh1P8MX8TrxWRETtKjxJDws203Qprh_y98UyuK-xXrb60jeGKn5bM5E-HPmcQdynPawrmyJ7KqxpwbOmSXVTE9uCg=s4800-w800-h600",
        maps:"https://maps.google.com/?cid=6672012766798876150"},
-      {id:"agora", name:"Antična Agora", cat:"Antika", area:"center", time:"~1 h", min:60, cost:"kombi vstopnica", free:false,
+      {id:"agora", name:"Antična Agora", cat:"Antika", area:"center", time:"~1 h", min:60, cost:"kombi vstopnica", free:false, eu25:true,
        desc:"Srce antičnega mesta, najbolje ohranjen Hefajstov tempelj v Grčiji. Tik pod Akropolo.",
        img:"https://lh3.googleusercontent.com/place-photos/AJRVUZPluiaIk2SQlDa3Hj_GOiHpLY_egGtS5dsJ8U2ru7weZF-uFUlNRmeDPU_qPwqKb0XuXqX3WZsAO6e1t4ElJq2KbML-ouHWesz2Mb4V7aubpkiCbYZInmigGoDNQ58eXvVh833PKCuMoxd1tJSIsModEA=s4800-w800-h600",
        maps:"https://maps.google.com/?cid=4767399792289144264"},
-      {id:"zeus", name:"Tempelj Zevsa Olimpijskega", cat:"Antika", area:"center", time:"30–45 min", min:40, cost:"kombi vstopnica", free:false,
+      {id:"zeus", name:"Tempelj Zevsa Olimpijskega", cat:"Antika", area:"center", time:"30–45 min", min:40, cost:"kombi vstopnica", free:false, eu25:true,
        desc:"Ogromni korintski stebri največjega antičnega templja v Grčiji + Hadrijanov slavolok zraven.",
        img:"https://lh3.googleusercontent.com/place-photos/AJRVUZPiLkWWocsV_zH1qa4JtUpAT7stFNd1faBUChu62VDhZfLQxVVV4YXECw10smuixY3WxiOFwm9cZLQu7cMNIHzVyVeYCO16-FW5cGUcKzm7Tx34_KWe69Lt3x5dIh83CffX2zSetOBn9fxVvg=s4800-w800-h600",
        maps:"https://maps.google.com/?cid=6132138122880303701"},
-      {id:"stadion", name:"Panatenajski stadion", cat:"Antika · šport", area:"center", time:"~45 min", min:45, cost:"~12 €", free:false,
+      {id:"stadion", name:"Panatenajski stadion", cat:"Antika · šport", area:"center", time:"~45 min", min:45, cost:"~12 €", free:false, eu25:false,
        desc:"Marmorni stadion prvih modernih olimpijskih iger 1896. Lahko tečeš po isti stezi.",
        img:"https://lh3.googleusercontent.com/place-photos/AJRVUZM_l4Ko9BXew9v2F8zsuU9E6bpM2Ax6jSI4sNKadfNtaZUA7diipMHQwH_ScZ2uxI8w1HXdtLs2XFKXzPYzIGEgwxKY70HMDLpy_Q6PFjkfY4PXZyKCKzEmXRBRSsBuN7HQQkgqfZcK1FDO=s4800-w800-h600",
        maps:"https://maps.google.com/?cid=12054650483721023558"}
     ]},
   { sec:"vista", title:"Razgledi & soseske", g:"g-vista",
     items:[
-      {id:"lyka", name:"Lycabettus hrib", cat:"Razgled", area:"Kolonaki", time:"1–1,5 h", min:80, cost:"vzpenjača ~9 €", free:false,
+      {id:"lyka", name:"Lycabettus hrib", cat:"Razgled", area:"Kolonaki", time:"1–1,5 h", min:80, cost:"vzpenjača ~9 €", free:false, eu25:false,
        desc:"Najvišja točka Aten s 360° razgledom in pogledom na Akropolo od zgoraj. Vrhunsko za sončni zahod.",
        img:"https://lh3.googleusercontent.com/place-photos/AJRVUZNNC3howVbqTlDLy-Yq0QyIEaPyjjLEuCftmGbwxOJrJ3zAXfsK3UKLo_BxpV7XIKGlkiG3FvXKpex8ddiFMgbvsC-qZMfCLynPvRzVSO2TJrirPWND7Xrj8pLuEb1dk6O_GkzkEuIZyT-lAA=s4800-w800-h600",
        maps:"https://maps.google.com/?cid=7509048695760588394"},
-      {id:"areo", name:"Areopagus hrib", cat:"Razgled · brezplačno", area:"center", time:"30–45 min", min:40, cost:"brezplačno", free:true,
+      {id:"areo", name:"Areopagus hrib", cat:"Razgled · brezplačno", area:"center", time:"30–45 min", min:40, cost:"brezplačno", free:true, eu25:false,
        desc:"Skalnati hrib z enim najboljših pogledov na Akropolo in mesto. Obuj superge — skale so spolzke.",
        img:"https://lh3.googleusercontent.com/place-photos/AJRVUZOW-wsuKFB9eXme70HZv2EaFDdGrgKLAIvK77Xio8DT_uoEKCA0yC46e-GS96sDflVvLkm-77fZ09CG0ovGGFGye_ISdJwGii4uWfTx8dEBFVcKOb0gnu-waMQe3QU_IeMibLe8ysi_anVoSw=s4800-w800-h600",
        maps:"https://maps.google.com/?cid=7439291690489159220"},
-      {id:"anafi", name:"Anafiotika", cat:"Soseska · brezplačno", area:"pod Akropolo", time:"~45 min", min:45, cost:"brezplačno", free:true,
+      {id:"anafi", name:"Anafiotika", cat:"Soseska · brezplačno", area:"pod Akropolo", time:"~45 min", min:45, cost:"brezplačno", free:true, eu25:false,
        desc:"Skrita kikladska vasica z belimi hišami in ozkimi uličicami — najlepši del sprehoda skozi Plako.",
        img:"https://lh3.googleusercontent.com/place-photos/AJRVUZPC1qyhvyEMc1ZaHBV-TODzTBQlur7W3Sd7X3k1DFJ4TwVe7tvXK4QqUT9dkrSjMG-QoFgHgQUKr2mkIsUJzsGb29sy__UHuSwkkw6yIMNqqpyLgkO3Fto2KK9nMC2uCARA6utG57h3HeoPBA=s4800-w800-h600",
        maps:"https://maps.google.com/?cid=655765740646913414"},
-      {id:"mona", name:"Monastiraki", cat:"Soseska · brezplačno", area:"center", time:"~1 h", min:60, cost:"brezplačno", free:true,
+      {id:"mona", name:"Monastiraki", cat:"Soseska · brezplačno", area:"center", time:"~1 h", min:60, cost:"brezplačno", free:true, eu25:false,
        desc:"Živahen trg z bolšjakom, kavarnami in pogledom na Akropolo. Vajina najbližja metro postaja.",
        img:"https://lh3.googleusercontent.com/place-photos/AJRVUZNEsuCZbBVF27_YlT7vRn8r-2Y7QlFZmeCrTHm0peuu_w-rXRkaYdLpmgGLPkbJoJmozMpKCCYY8iwkOwlDknnzxoP54j_P74pOZb7OesgxSfV4JZYmiKdgdNLIXnGIaDYwk23k1mZNWZ9VHg=s4800-w800-h600",
        maps:"https://maps.google.com/?cid=2738396578593853266"}
     ]},
   { sec:"museum", title:"Muzeji", g:"g-museum",
     items:[
-      {id:"acromus", name:"Akropolski muzej", cat:"Muzej", area:"center", time:"~2 h", min:120, cost:"~20 €", free:false,
+      {id:"acromus", name:"Akropolski muzej", cat:"Muzej", area:"center", time:"~2 h", min:120, cost:"~20 €", free:false, eu25:true,
        desc:"Vrhunski moderni muzej — Partenonski friz in Kariatide, stekleni tlaki nad izkopaninami, kavarna z razgledom.",
        img:"https://lh3.googleusercontent.com/place-photos/AJRVUZPNrZVpjdRBJERcNedY2R1fBBH-WBVFA6zTm3u4TxC9AxIrYZ6tHWqSVHBuq58D-iSubaaD9haaqgDAhENiQfaxV78Q_Plv-tt114VCCvKtAGPRWMhT5wbGcOM8VvnaWCAwbglqo79HvxTUh1Y=s4800-w800-h600",
        maps:"https://maps.google.com/?cid=12686557043423775292"},
-      {id:"natmus", name:"Narodni arheološki muzej", cat:"Muzej", area:"Exarchia", time:"~2 h", min:120, cost:"~12 €", free:false,
+      {id:"natmus", name:"Narodni arheološki muzej", cat:"Muzej", area:"Exarchia", time:"~2 h", min:120, cost:"~12 €", free:false, eu25:true,
        desc:"Eden najboljših muzejev na svetu in manj gneče kot akropolski — Mikenska maska, antični kipi.",
        img:"https://lh3.googleusercontent.com/place-photos/AJRVUZNUJJr7rVLkQQ4NiAzWk_wSoSgKFfxxhTqBAvTPhBgt-oQlursKKeyQe5rSiaRAvr5twH-Gh_FW3Vy_kjlzVu_DaPh3s3Sgps74nWjjQQtR-eZdylAkKvB0e6z4pWrGhD69bLJW7ib_IstX4Q=s4800-w612-h408",
        maps:"https://maps.google.com/?cid=189886983832306356"}
     ]},
   { sec:"city", title:"Utrip mesta", g:"g-city",
     items:[
-      {id:"synt", name:"Syntagma — menjava straže", cat:"Doživetje · brezplačno", area:"center", time:"20–30 min", min:25, cost:"brezplačno", free:true,
+      {id:"synt", name:"Syntagma — menjava straže", cat:"Doživetje · brezplačno", area:"center", time:"20–30 min", min:25, cost:"brezplačno", free:true, eu25:false,
        desc:"Evzoni stražarji v tradicionalnih uniformah pred parlamentom; svečana menjava vsako polno uro.",
        img:"https://lh3.googleusercontent.com/place-photos/AJRVUZP7ZEKYZAV8c5jbmCdNNFhwKMMrxmAR3BY6szJSFojvvfPUOUONrMqs16bSLHHoqp6nyq-F1uyWEMY6jQU1_1spDEm_qLEs5kDVppUmU5D6kvT_4PVyxnRM-ZgvEeYUlC1ULVpIv5JSUZ6b=s4800-w800-h600",
        maps:"https://maps.google.com/?cid=7546362094867535374"},
-      {id:"varv", name:"Varvakios tržnica", cat:"Utrip · brezplačno", area:"center", time:"~45 min", min:45, cost:"brezplačno", free:true,
+      {id:"varv", name:"Varvakios tržnica", cat:"Utrip · brezplačno", area:"center", time:"~45 min", min:45, cost:"brezplačno", free:true, eu25:false,
        desc:"Pristna mestna tržnica (ribe, meso, začimbe) — avtentičen utrip in cenene tradicionalne taverne okrog.",
        img:"https://lh3.googleusercontent.com/place-photos/AJRVUZODKp8IetC5c59BBUFiA3QgX2djLuszUTnXQmfAFBK47ai4Hm4UQNKGIF57zs1bEisfwAyIakxTty8WSwQHffFdGn6XH4uXCT29NFRCq2fDTma7i8SiBGMD-ahdPgfKo8v6q92PEgAZRRQYNQk=s4800-w800-h600",
        maps:"https://maps.google.com/?cid=3472634211369894957"}
@@ -340,11 +338,51 @@ const WHY = {
   varv:"Najpristnejša atenska izkušnja: vpitje prodajalcev, ribe, meso in začimbe, okrog pa stoletne taverne, kjer jedo domačini. Polno utripa in vonjav."
 };
 
+const COST = { agora:"~10 €", zeus:"~8 €", stadion:"~10 €", lyka:"vzpenjača ~7–10 €" };
+const TICKET = {
+  acro:"https://hhticket.gr",
+  agora:"https://hhticket.gr",
+  zeus:"https://hhticket.gr",
+  natmus:"https://hhticket.gr",
+  acromus:"https://etickets.theacropolismuseum.gr",
+  stadion:"https://www.panathenaicstadium.gr/en/visit/"
+};
+const MAPSQ = {
+  acro:"https://www.google.com/maps/search/?api=1&query=Acropolis+of+Athens",
+  agora:"https://www.google.com/maps/search/?api=1&query=Ancient+Agora+of+Athens",
+  zeus:"https://www.google.com/maps/search/?api=1&query=Temple+of+Olympian+Zeus+Athens",
+  stadion:"https://www.google.com/maps/search/?api=1&query=Panathenaic+Stadium+Athens",
+  acromus:"https://www.google.com/maps/search/?api=1&query=Acropolis+Museum+Athens",
+  natmus:"https://www.google.com/maps/search/?api=1&query=National+Archaeological+Museum+Athens",
+  lyka:"https://www.google.com/maps/search/?api=1&query=Mount+Lycabettus+Athens",
+  areo:"https://www.google.com/maps/search/?api=1&query=Areopagus+Hill+Athens",
+  anafi:"https://www.google.com/maps/search/?api=1&query=Anafiotika+Athens",
+  mona:"https://www.google.com/maps/search/?api=1&query=Monastiraki+Square+Athens",
+  synt:"https://www.google.com/maps/search/?api=1&query=Syntagma+Square+Athens",
+  varv:"https://www.google.com/maps/search/?api=1&query=Varvakios+Agora+Athens"
+};
+const WHEN = {
+  acro:"Odprto pribl. 8–19h. Najbolje ob 8:00 ob odprtju — manj gneče in vročine.",
+  agora:"Odprto pribl. 8–19h. Najbolje dopoldne, povezano z obiskom Akropole.",
+  zeus:"Odprto pribl. 8–19h. Hitra postaja — kadarkoli med dnevom.",
+  stadion:"Odprto pribl. 8–19h. Najlepše zjutraj ali pozno popoldne. Vstopnice le na blagajni.",
+  acromus:"Odprto pribl. 8–20h (poletje), ob petkih dlje. Najbolje opoldne/popoldne, po Akropoli.",
+  natmus:"Najmanj gneče dopoldne. Nekateri dnevi šele od 13h — preveri urnik na strani.",
+  lyka:"Top ob sončnem zahodu! Pridi ~45 min prej. Vzpenjača vozi pozno (ali peš gor brezplačno).",
+  areo:"Najlepše ob sončnem zahodu — pogled na Akropolo. Podnevi vroče in spolzko. Vedno odprto.",
+  anafi:"Vedno odprto, brezplačno. Najlepše zjutraj ali v zlati uri pred sončnim zahodom.",
+  mona:"Najživahneje zvečer; bolšjak je najboljši v nedeljo dopoldne.",
+  synt:"Menjava straže vsako polno uro; velika ceremonija ob nedeljah ob 11h. Brezplačno.",
+  varv:"Najživahneje dopoldne (~7–15h). Zaprto ob nedeljah."
+};
+
 const app = document.getElementById('app');
-const ORDER = ["want","maybe","skip","none"];   // none -> want -> maybe -> skip -> none
+
+// SAMO DVE MOŽNOSTI
+const ORDER = ["none", "want"];
 const next = s => ORDER[(ORDER.indexOf(s)+1)%ORDER.length];
-const STATE_LABEL = {none:"tapni za izbiro", want:"✓ želim videti", maybe:"~ mogoče", skip:"✕ preskoči"};
-const SEAL = {want:"✓", maybe:"~", skip:"✕"};
+const STATE_LABEL = {none:"tapni za izbiro", want:"✓ želim videti"};
+const SEAL = {none:"", want:"✓"};
 const byId = {};
 
 SIGHTS.forEach((group,gi)=>{
@@ -364,6 +402,7 @@ SIGHTS.forEach((group,gi)=>{
     card.setAttribute('aria-pressed','false');
     card.setAttribute('aria-label', it.name + ' — ' + STATE_LABEL.none);
     card.style.animationDelay = (0.04*idx)+'s';
+    
     card.innerHTML = `
       <figure>
         <div class="ph ${group.g}">${ILL[it.id]||''}<span class="ph-name">${it.name}</span></div>
@@ -375,15 +414,19 @@ SIGHTS.forEach((group,gi)=>{
         <p class="desc">${WHY[it.id]||it.desc}</p>
         <div class="chips">
           <span class="chip">⏱ ${it.time}</span>
-          <span class="chip ${it.free?'free':''}">${it.free?'✓ ':''}${it.cost}</span>
+          <span class="chip ${it.free?'free':''}">${it.free?'✓ ':''}${COST[it.id]||it.cost}</span>
+          ${it.eu25 ? `<span class="chip free">✓ 25🇪🇺</span>` : ''}
           <span class="chip">📍 ${it.area}</span>
         </div>
+        <div class="when">⏰ ${WHEN[it.id]||''}</div>
         <div class="links">
           <a class="lnk shot" href="${WIKI[it.id]}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📷 ${WIKI[it.id].includes('wikipedia')?'Slike na Wikipediji':'Slike & info'}</a>
-          <a class="lnk" href="${it.maps}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📍 Zemljevid</a>
+          <a class="lnk" href="${MAPSQ[it.id]}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📍 Zemljevid</a>
+          ${TICKET[it.id]?`<a class="lnk tix" href="${TICKET[it.id]}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🎟 Vstopnica</a>`:''}
         </div>
         <div class="foot"><span class="state-txt">${STATE_LABEL.none}</span></div>
       </div>`;
+      
     const cycle = ()=>{
       const ns = next(card.dataset.state);
       card.dataset.state = ns;
@@ -403,18 +446,22 @@ SIGHTS.forEach((group,gi)=>{
   app.appendChild(sec);
 });
 
-// approximate entry prices per person (EUR). Acropolis combined ticket (~30€) covers acro+agora+zeus.
-const COMBO=['acro','agora','zeus'];
-const PRICE={acro:30,agora:10,zeus:8,stadion:12,acromus:20,natmus:12,lyka:9,areo:0,anafi:0,mona:0,synt:0,varv:0};
-function calcPrice(ids){
-  let p=0;
-  if(ids.includes('acro')) p+=30;                                   // combined ticket
-  else { if(ids.includes('agora'))p+=PRICE.agora; if(ids.includes('zeus'))p+=PRICE.zeus; }
-  ids.forEach(id=>{ if(!COMBO.includes(id)) p+=(PRICE[id]||0); });
-  return p;
+const PRICE={acro:30,agora:10,zeus:8,stadion:10,acromus:20,natmus:12,lyka:10,areo:0,anafi:0,mona:0,synt:0,varv:0};
+
+function calcGroupPrice(ids) {
+  return ids.reduce((vsota, id) => {
+    const item = byId[id];
+    const polnaCena = PRICE[id] || 0;
+    
+    if (item.eu25) {
+      return vsota + polnaCena;
+    } else {
+      return vsota + (polnaCena * 4);
+    }
+  }, 0);
 }
 
-const elWant=document.getElementById('cWant'), elMaybe=document.getElementById('cMaybe'),
+const elWant=document.getElementById('cWant'),
       elTime=document.getElementById('cTime'), elPrice=document.getElementById('cPrice'),
       sumlist=document.getElementById('sumlist'), sumtotal=document.getElementById('sumtotal'),
       tip=document.getElementById('tip');
@@ -422,15 +469,16 @@ const elWant=document.getElementById('cWant'), elMaybe=document.getElementById('
 function update(){
   const cards=[...document.querySelectorAll('.card')];
   const want = cards.filter(c=>c.dataset.state==='want');
-  const maybe = cards.filter(c=>c.dataset.state==='maybe');
   elWant.textContent = want.length;
-  elMaybe.textContent = maybe.length;
+  
   const mins = want.reduce((s,c)=>s+(byId[c.dataset.id].min||0),0);
   elTime.textContent = (mins/60).toFixed(mins%60?1:0);
 
   const ids = want.map(c=>c.dataset.id);
-  const price = calcPrice(ids);
-  elPrice.textContent = price;
+  const totalGroupPrice = calcGroupPrice(ids);
+  const avgPrice = totalGroupPrice / 4; 
+  
+  elPrice.textContent = avgPrice % 1 === 0 ? avgPrice : avgPrice.toFixed(1);
 
   sumlist.innerHTML='';
   if(!want.length){
@@ -440,14 +488,16 @@ function update(){
     want.forEach((c,i)=>{
       const it=byId[c.dataset.id];
       const li=document.createElement('li');
-      li.innerHTML=`<span class="n">${String(i+1).padStart(2,'0')}</span><span>${it.name}</span><span class="t">${it.time} · ${it.cost}</span>`;
+      li.innerHTML=`<span class="n">${String(i+1).padStart(2,'0')}</span><span>${it.name}</span><span class="t">${it.time} · ${COST[it.id]||it.cost}</span>`;
       sumlist.appendChild(li);
     });
     sumtotal.hidden = false;
+    
+    const displayAvgPrice = avgPrice % 1 === 0 ? avgPrice : avgPrice.toFixed(1);
     sumtotal.innerHTML =
-      `<span class="lab">Ocena vstopnin</span>`+
-      `<span class="val"><b>≈ ${price} €</b> <small>na osebo</small></span>`+
-      `<span class="val"><b>≈ ${price*4} €</b> <small>za vse 4</small></span>`+
+      `<span class="lab">Skupna ocena (3× mladi do 25, 1× odrasli)</span>`+
+      `<span class="val"><b>≈ ${totalGroupPrice} €</b> <small>za vse 4 skupaj</small></span>`+
+      `<span class="val"><b>≈ ${displayAvgPrice} €</b> <small>povprečno na osebo</small></span>`+
       `<span class="val"><b>≈ ${(mins/60).toFixed(mins%60?1:0)} h</b> <small>ogledov</small></span>`;
   }
   tip.style.display='block';
